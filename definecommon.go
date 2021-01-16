@@ -11,4 +11,5 @@ const (
 	TABLESTATUS_PLAYING
 	//结束
 	TABLESTATUS_ENDING
+	//
 )

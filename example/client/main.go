@@ -2,8 +2,9 @@ package main
 
 import (
 	"fmt"
-	"gameprovider"
 	"reflect"
+
+	"github.com/luis-quan/gameprovider"
 
 	"github.com/luis-quan/cellnet"
 	_ "github.com/luis-quan/cellnet/peer/gorillaws"

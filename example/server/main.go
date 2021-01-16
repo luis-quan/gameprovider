@@ -2,8 +2,9 @@ package main
 
 import (
 	"fmt"
-	"gameprovider"
 	"reflect"
+
+	"github.com/luis-quan/gameprovider"
 
 	"github.com/luis-quan/cellnet"
 	"github.com/luis-quan/cellnet/timer"

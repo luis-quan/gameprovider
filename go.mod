@@ -1,4 +1,4 @@
-module gameprovider
+module github.com/luis-quan/gameprovider
 
 go 1.15
 

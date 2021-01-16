@@ -109,6 +109,7 @@ func (s *gameprovider) createSesContext() *SesContext {
 	return context
 }
 
+//接受到连接 创建连接
 func (s *gameprovider) createConnection(session cellnet.Session) {
 	context := s.createSesContext()
 	context.ses = session
@@ -116,17 +117,7 @@ func (s *gameprovider) createConnection(session cellnet.Session) {
 	s.sesContextmgr.addUseContext(context)
 }
 
-func (s *gameprovider) ReleaseConnection(session cellnet.Session) {
-	context, ok := session.(cellnet.ContextSet).GetContext(SES_CONTEXT)
-	if ok == true && context != nil {
-		sesContext, ok := context.(*SesContext)
-		if ok && sesContext != nil {
-			sesContext.bCanRelease = true
-			s.sesContextmgr.eraseUseContext(sesContext)
-		}
-	}
-}
-
+//关闭的返回
 func (s *gameprovider) onCloseConnection(session cellnet.Session) {
 	if context, ok := session.(cellnet.ContextSet).GetContext(SES_CONTEXT); ok == true && context != nil {
 		sesContext, ok := context.(*SesContext)
@@ -137,6 +128,18 @@ func (s *gameprovider) onCloseConnection(session cellnet.Session) {
 			sesContext.ses = nil
 		}
 	}
+}
+
+// CloseSession强制关闭socket
+func (s *gameprovider) CloseSession(session cellnet.Session) {
+	context, ok := session.(cellnet.ContextSet).GetContext(SES_CONTEXT)
+	if ok == true && context != nil {
+		sesContext, ok := context.(*SesContext)
+		if ok && sesContext != nil {
+			sesContext.bCanRelease = true
+		}
+	}
+	session.Close()
 }
 
 func (s *gameprovider) onEvent(ev cellnet.Event) {
@@ -163,11 +166,11 @@ func (s *gameprovider) onEvent(ev cellnet.Event) {
 			os.Exit(1)
 			break
 		default:
-			s.serverLogic.OnNetMessage(event.Session().Peer(), event.ID(), event.Message())
+			s.serverLogic.OnNetMessage(event.Session(), event.ID(), event.Message())
 			break
 		}
 
-		s.serverLogic.OnNetMessage(event.Session().Peer(), event.ID(), event.Message())
+		s.serverLogic.OnNetMessage(event.Session(), event.ID(), event.Message())
 	}
 }
 

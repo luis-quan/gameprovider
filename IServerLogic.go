@@ -9,7 +9,7 @@ import (
 type IServerLogic interface {
 	OnInit()
 	OnTimer(loop *timer.Loop)
-	OnNetMessage(p cellnet.Peer, id int, msg interface{})
+	OnNetMessage(ses cellnet.Session, id int, msg interface{})
 	OnConnectSuccess(session cellnet.Session)
 	OnConnectAccept(session cellnet.Session)
 	OnConnectClosed(session cellnet.Session)

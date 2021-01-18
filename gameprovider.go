@@ -112,7 +112,7 @@ func (s *gameprovider) createSesContext() *SesContext {
 //接受到连接 创建连接
 func (s *gameprovider) createConnection(session cellnet.Session) {
 	context := s.createSesContext()
-	context.ses = session
+	context.setSession(session)
 	session.(cellnet.ContextSet).SetContext(SES_CONTEXT, context)
 	s.sesContextmgr.addUseContext(context)
 }
@@ -125,7 +125,7 @@ func (s *gameprovider) onCloseConnection(session cellnet.Session) {
 			if sesContext.bCanRelease {
 				s.sesContextmgr.eraseUseContext(sesContext)
 			}
-			sesContext.ses = nil
+			sesContext.setSession(nil)
 		}
 	}
 }
@@ -142,6 +142,26 @@ func (s *gameprovider) CloseSession(session cellnet.Session) {
 	session.Close()
 }
 
+// SetContextCanRelease是不是能释放节点
+func (s *gameprovider) SetContextCanRelease(sescontext SesContext, b bool) {
+	if sescontext.id != 0 {
+		if ses, bf := s.sesContextmgr.findContext(sescontext.id); bf == true {
+			//已经断开连接了
+			if sescontext.ses == nil {
+				//释放掉
+				s.sesContextmgr.eraseUseContext(ses)
+			} else {
+				//连接还在
+				sescontext.setCanRelease(true)
+			}
+		} else {
+			//查找出错了
+		}
+	} else {
+		//这个节点 本来就不在使用不需要控制
+	}
+}
+
 func (s *gameprovider) onEvent(ev cellnet.Event) {
 	switch event := ev.(type) {
 	case *cellnet.RecvMsgEvent:
@@ -149,16 +169,22 @@ func (s *gameprovider) onEvent(ev cellnet.Event) {
 		case *cellnet.SessionConnected:
 			log.Debugln("client connected ", msg)
 			s.createConnection(event.Session())
-			s.serverLogic.OnConnectSuccess(event.Session())
+			if sescontext, bf := s.sesContextmgr.findContext(event.Session().ID()); bf == true {
+				s.serverLogic.OnConnectSuccess(sescontext)
+			}
 			break
 		case *cellnet.SessionAccepted:
 			log.Debugln("client accepted ", msg)
 			s.createConnection(event.Session())
-			s.serverLogic.OnConnectAccept(event.Session())
+			if sescontext, bf := s.sesContextmgr.findContext(event.Session().ID()); bf == true {
+				s.serverLogic.OnConnectAccept(sescontext)
+			}
 			break
 		case *cellnet.SessionClosed:
 			log.Debugln("client error ")
-			s.serverLogic.OnConnectClosed(event.Session())
+			if sescontext, bf := s.sesContextmgr.findContext(event.Session().ID()); bf == true {
+				s.serverLogic.OnConnectClosed(sescontext)
+			}
 			s.onCloseConnection(event.Session())
 			break
 		case *cellnet.SessionConnectError:
@@ -166,11 +192,15 @@ func (s *gameprovider) onEvent(ev cellnet.Event) {
 			os.Exit(1)
 			break
 		default:
-			s.serverLogic.OnNetMessage(event.Session(), event.ID(), event.Message())
+			if sescontext, bf := s.sesContextmgr.findContext(event.Session().ID()); bf == true {
+				s.serverLogic.OnNetMessage(sescontext, event.ID(), event.Message())
+			}
 			break
 		}
 
-		s.serverLogic.OnNetMessage(event.Session(), event.ID(), event.Message())
+		if sescontext, bf := s.sesContextmgr.findContext(event.Session().ID()); bf == true {
+			s.serverLogic.OnNetMessage(sescontext, event.ID(), event.Message())
+		}
 	}
 }
 

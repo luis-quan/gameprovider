@@ -13,6 +13,7 @@ type UserContextInterface interface {
 
 //SesContext 保存节点数据...
 type SesContext struct {
+	id          int64
 	ses         cellnet.Session
 	bCanRelease bool
 	userContext UserContextInterface
@@ -24,7 +25,15 @@ func (s *SesContext) SendData(msg interface{}) {
 	}
 }
 
-func (s *SesContext) SetRelease(b bool) {
+func (s *SesContext) Peer() cellnet.Peer {
+	if s.ses != nil {
+		return s.ses.Peer()
+	}
+
+	return nil
+}
+
+func (s *SesContext) setCanRelease(b bool) {
 	s.bCanRelease = b
 }
 
@@ -40,6 +49,7 @@ func (s *SesContext) ID() (int64, error) {
 func (s *SesContext) reset() {
 	s.ses = nil
 	s.bCanRelease = true
+	s.id = 0
 	s.userContext.Reset()
 }
 
@@ -47,4 +57,11 @@ func (s *SesContext) reset() {
 func (s *SesContext) initialize() {
 	s.bCanRelease = true
 	s.userContext.Init()
+}
+
+func (s *SesContext) setSession(ses cellnet.Session) {
+	s.ses = ses
+	if ses != nil {
+		s.id = ses.ID()
+	}
 }

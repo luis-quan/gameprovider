@@ -34,26 +34,26 @@ func (s *Serverlogic) OnInit() {
 func (s *Serverlogic) OnTimer(loop *timer.Loop) {
 
 }
-func (s *Serverlogic) OnNetMessage(p cellnet.Peer, id int, msg interface{}) {
-	if p == s.serverPeer {
+func (s *Serverlogic) OnNetMessage(sescontext *gameprovider.SesContext, id int, msg interface{}) {
+	if sescontext.Peer() == s.serverPeer {
 		fmt.Println("OnNetMessage")
 	}
 }
-func (s *Serverlogic) OnConnectSuccess(session cellnet.Session) {
-
+func (s *Serverlogic) OnConnectSuccess(context *gameprovider.SesContext) {
+	fmt.Println("OnConnectSuccess")
 }
-func (s *Serverlogic) OnConnectAccept(session cellnet.Session) {
-
+func (s *Serverlogic) OnConnectAccept(context *gameprovider.SesContext) {
+	fmt.Println("OnConnectAccept")
 }
-func (s *Serverlogic) OnConnectClosed(session cellnet.Session) {
-
+func (s *Serverlogic) OnConnectClosed(context *gameprovider.SesContext) {
+	fmt.Println("OnConnectClosed")
 }
-func (s *Serverlogic) OnUserOffline(player *gameprovider.SesContext) {
-
+func (s *Serverlogic) OnUserOffline(context *gameprovider.SesContext) {
+	fmt.Println("OnUserOffline")
 }
 
-func (s *Serverlogic) OnUserGoBack(player *gameprovider.SesContext) {
-
+func (s *Serverlogic) OnUserGoBack(context *gameprovider.SesContext) {
+	fmt.Println("OnUserGoBack")
 }
 
 type tableinfo struct {

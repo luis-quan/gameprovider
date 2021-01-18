@@ -1,7 +1,6 @@
 package gameprovider
 
 import (
-	"github.com/luis-quan/cellnet"
 	"github.com/luis-quan/cellnet/timer"
 )
 
@@ -9,10 +8,10 @@ import (
 type IServerLogic interface {
 	OnInit()
 	OnTimer(loop *timer.Loop)
-	OnNetMessage(ses cellnet.Session, id int, msg interface{})
-	OnConnectSuccess(session cellnet.Session)
-	OnConnectAccept(session cellnet.Session)
-	OnConnectClosed(session cellnet.Session)
-	OnUserOffline(ses *SesContext)
-	OnUserGoBack(ses *SesContext)
+	OnNetMessage(sescontext *SesContext, id int, msg interface{})
+	OnConnectSuccess(sescontext *SesContext)
+	OnConnectAccept(sescontext *SesContext)
+	OnConnectClosed(sescontext *SesContext)
+	OnUserOffline(sescontext *SesContext)
+	OnUserGoBack(sescontext *SesContext)
 }

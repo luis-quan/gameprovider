@@ -13,10 +13,11 @@ type UserContextInterface interface {
 
 //SesContext 保存节点数据...
 type SesContext struct {
-	id          int64
-	ses         cellnet.Session
-	bCanRelease bool
-	userContext UserContextInterface
+	id           int64
+	ses          cellnet.Session
+	gameProvider *gameprovider
+	bCanRelease  bool
+	userContext  UserContextInterface
 }
 
 func (s *SesContext) SendData(msg interface{}) {
@@ -33,7 +34,18 @@ func (s *SesContext) Peer() cellnet.Peer {
 	return nil
 }
 
-func (s *SesContext) setCanRelease(b bool) {
+func (s *SesContext) Close(bRelease bool) {
+	if bRelease {
+		s.SetCanRelease(true)
+	}
+	if s.ses != nil {
+		s.ses.Close()
+	} else {
+		s.gameProvider.releaseContext(s)
+	}
+}
+
+func (s *SesContext) SetCanRelease(b bool) {
 	s.bCanRelease = b
 }
 
@@ -48,6 +60,7 @@ func (s *SesContext) ID() (int64, error) {
 //ResetNode 重置节点数据
 func (s *SesContext) reset() {
 	s.ses = nil
+	s.gameProvider = nil
 	s.bCanRelease = true
 	s.id = 0
 	s.userContext.Reset()
@@ -59,8 +72,9 @@ func (s *SesContext) initialize() {
 	s.userContext.Init()
 }
 
-func (s *SesContext) setSession(ses cellnet.Session) {
+func (s *SesContext) setSession(ses cellnet.Session, gameProvider *gameprovider) {
 	s.ses = ses
+	s.gameProvider = gameProvider
 	if ses != nil {
 		s.id = ses.ID()
 	}

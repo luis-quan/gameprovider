@@ -112,7 +112,7 @@ func (s *gameprovider) createSesContext() *SesContext {
 //接受到连接 创建连接
 func (s *gameprovider) createConnection(session cellnet.Session) {
 	context := s.createSesContext()
-	context.setSession(session)
+	context.setSession(session, s)
 	session.(cellnet.ContextSet).SetContext(SES_CONTEXT, context)
 	s.sesContextmgr.addUseContext(context)
 }
@@ -125,25 +125,17 @@ func (s *gameprovider) onCloseConnection(session cellnet.Session) {
 			if sesContext.bCanRelease {
 				s.sesContextmgr.eraseUseContext(sesContext)
 			}
-			sesContext.setSession(nil)
+			sesContext.setSession(nil, s)
 		}
 	}
 }
 
-// CloseSession强制关闭socket
-func (s *gameprovider) CloseSession(session cellnet.Session) {
-	context, ok := session.(cellnet.ContextSet).GetContext(SES_CONTEXT)
-	if ok == true && context != nil {
-		sesContext, ok := context.(*SesContext)
-		if ok && sesContext != nil {
-			sesContext.bCanRelease = true
-		}
-	}
-	session.Close()
+func (s *gameprovider) releaseContext(sescontext *SesContext) {
+	s.sesContextmgr.eraseUseContext(sescontext)
 }
 
 // SetContextCanRelease是不是能释放节点
-func (s *gameprovider) SetContextCanRelease(sescontext SesContext, b bool) {
+func (s *gameprovider) SetContextCanRelease(sescontext *SesContext, b bool) {
 	if sescontext.id != 0 {
 		if ses, bf := s.sesContextmgr.findContext(sescontext.id); bf == true {
 			//已经断开连接了
@@ -152,7 +144,7 @@ func (s *gameprovider) SetContextCanRelease(sescontext SesContext, b bool) {
 				s.sesContextmgr.eraseUseContext(ses)
 			} else {
 				//连接还在
-				sescontext.setCanRelease(true)
+				sescontext.SetCanRelease(true)
 			}
 		} else {
 			//查找出错了

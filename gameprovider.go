@@ -96,9 +96,10 @@ func (s *gameprovider) createSesContext() *SesContext {
 	if context.userContext == nil {
 		co := reflect.New(s.userContextType).Interface()
 		if userContext, ok := co.(UserContextInterface); ok {
+			userContext.OnCreate()
 			context.userContext = userContext
 		} else {
-			os.Exit(11)
+			os.Exit(111)
 		}
 	}
 

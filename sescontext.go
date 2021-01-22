@@ -8,6 +8,7 @@ import (
 )
 
 type UserContextInterface interface {
+	OnCreate()
 	Init()
 	Reset()
 }

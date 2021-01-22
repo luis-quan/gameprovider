@@ -187,10 +187,6 @@ func (s *gameprovider) onEvent(ev cellnet.Event) {
 			}
 			break
 		}
-
-		if sescontext, bf := s.sesContextmgr.findContext(event.Session().ID()); bf == true {
-			s.serverLogic.OnNetMessage(sescontext, event.ID(), event.Message())
-		}
 	}
 }
 

@@ -28,7 +28,7 @@ type Serverlogic struct {
 }
 
 func (s *Serverlogic) OnInit() {
-	s.serverPeer = gameprovider.Ggameprovider.ConnectServer("client", "127.0.0.1:18803")
+	s.serverPeer = gameprovider.Ggameprovider.ConnectServer("client", "127.0.0.1:18803", "gorillawsheaders.ltv")
 }
 
 func (s *Serverlogic) OnTimer(loop *timer.Loop) {

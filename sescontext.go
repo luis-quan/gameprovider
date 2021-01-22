@@ -4,6 +4,7 @@ import (
 	"errors"
 
 	"github.com/luis-quan/cellnet"
+	"github.com/luis-quan/cellnet/serial/binaryserial"
 )
 
 type UserContextInterface interface {
@@ -18,6 +19,21 @@ type SesContext struct {
 	gameProvider *gameprovider
 	bCanRelease  bool
 	userContext  UserContextInterface
+}
+
+func (s *SesContext) SendRawData(msg interface{}, id int) {
+	b, err := binaryserial.BinaryWrite(msg, 4)
+
+	if err == nil {
+		data := new(cellnet.RawPacket)
+		data.MsgData = b
+		data.MsgID = id
+		if s.ses != nil {
+			s.ses.Send(data)
+		}
+	} else {
+		log.Errorln(msg)
+	}
 }
 
 func (s *SesContext) SendData(msg interface{}) {

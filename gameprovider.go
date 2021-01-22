@@ -10,7 +10,7 @@ import (
 	"github.com/luis-quan/cellnet/peer"
 	_ "github.com/luis-quan/cellnet/peer/gorillaws"
 	"github.com/luis-quan/cellnet/proc"
-	_ "github.com/luis-quan/cellnet/proc/gorillaws"
+	_ "github.com/luis-quan/cellnet/proc/gorillawsheaders"
 	"github.com/luis-quan/cellnet/timer"
 )
 
@@ -39,9 +39,8 @@ func (s *gameprovider) Initialize(serverLogic IServerLogic) {
 	s.sesContextmgr.init()
 }
 
-func (s *gameprovider) CreateServer(name string, addr string) cellnet.Peer {
+func (s *gameprovider) CreateServer(name string, addr string, procName string) cellnet.Peer {
 	peerType := "gorillaws.Acceptor"
-	procName := "gorillaws.ltv"
 	//Peer初始话
 	var p cellnet.GenericPeer
 	p = peer.NewGenericPeer(peerType, name, addr, s.queue)
@@ -53,9 +52,8 @@ func (s *gameprovider) CreateServer(name string, addr string) cellnet.Peer {
 	return p
 }
 
-func (s *gameprovider) ConnectServer(name string, addr string) cellnet.Peer {
+func (s *gameprovider) ConnectServer(name string, addr string, procName string) cellnet.Peer {
 	peerType := "gorillaws.Connector"
-	procName := "gorillaws.ltv"
 	//Peer初始话
 	var p cellnet.GenericPeer
 	p = peer.NewGenericPeer(peerType, name, addr, s.queue)

@@ -12,6 +12,4 @@ type IServerLogic interface {
 	OnConnectSuccess(sescontext *SesContext)
 	OnConnectAccept(sescontext *SesContext)
 	OnConnectClosed(sescontext *SesContext)
-	OnUserOffline(sescontext *SesContext)
-	OnUserGoBack(sescontext *SesContext)
 }

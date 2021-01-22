@@ -46,13 +46,6 @@ func (s *Serverlogic) OnConnectAccept(context *gameprovider.SesContext) {
 func (s *Serverlogic) OnConnectClosed(context *gameprovider.SesContext) {
 
 }
-func (s *Serverlogic) OnUserOffline(context *gameprovider.SesContext) {
-
-}
-
-func (s *Serverlogic) OnUserGoBack(context *gameprovider.SesContext) {
-
-}
 
 type tableinfo struct {
 }

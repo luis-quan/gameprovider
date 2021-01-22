@@ -51,13 +51,6 @@ func (s *Serverlogic) OnConnectClosed(context *gameprovider.SesContext) {
 	fmt.Println("OnConnectClosed")
 
 }
-func (s *Serverlogic) OnUserOffline(context *gameprovider.SesContext) {
-	fmt.Println("OnUserOffline")
-}
-
-func (s *Serverlogic) OnUserGoBack(context *gameprovider.SesContext) {
-	fmt.Println("OnUserGoBack")
-}
 
 type tableinfo struct {
 }

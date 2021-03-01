@@ -57,6 +57,9 @@ func (s *SesContext) Close(bRelease bool) {
 	}
 	if s.ses != nil {
 		s.ses.Close()
+		if bRelease {
+			s.gameProvider.releaseContext(s)
+		}
 	} else {
 		s.gameProvider.releaseContext(s)
 	}
@@ -94,5 +97,7 @@ func (s *SesContext) setSession(ses cellnet.Session, gameProvider *gameprovider)
 	s.gameProvider = gameProvider
 	if ses != nil {
 		s.id = ses.ID()
+	} else {
+		s.id = 0
 	}
 }

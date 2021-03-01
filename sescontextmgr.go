@@ -44,7 +44,7 @@ func (s *sescontextmgr) addFree(ses *SesContext) {
 	s.listFree.PushBack(ses)
 }
 
-func (s *sescontextmgr) addUseContext(ses *SesContext) {
+func (s *sescontextmgr) addContext(ses *SesContext) {
 	log.Debugf("add to use pool sesContext len:%d!", s.listFree.Len())
 	if id, err := ses.ID(); err == nil {
 		s.mapSesContext[id] = ses
@@ -53,7 +53,7 @@ func (s *sescontextmgr) addUseContext(ses *SesContext) {
 	}
 }
 
-func (s *sescontextmgr) eraseUseContext(ses *SesContext) {
+func (s *sescontextmgr) removeContext(ses *SesContext) {
 	log.Debugf("remove from user pool sesContext len:%d!", s.listFree.Len())
 	if id, err := ses.ID(); err == nil {
 		delete(s.mapSesContext, id)

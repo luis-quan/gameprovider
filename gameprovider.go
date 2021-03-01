@@ -10,7 +10,6 @@ import (
 	"github.com/luis-quan/cellnet/peer"
 	_ "github.com/luis-quan/cellnet/peer/gorillaws"
 	"github.com/luis-quan/cellnet/proc"
-	_ "github.com/luis-quan/cellnet/proc/gorillawsheaders"
 	"github.com/luis-quan/cellnet/timer"
 )
 

@@ -7,7 +7,7 @@ import (
 	"github.com/luis-quan/cellnet/serial/binaryserial"
 )
 
-type UserContextInterface interface {
+type NodeContextInterface interface {
 	OnCreate()
 	Init()
 	Reset()
@@ -19,7 +19,11 @@ type SesContext struct {
 	ses          cellnet.Session
 	gameProvider *gameprovider
 	bCanRelease  bool
-	userContext  UserContextInterface
+	nodeContext  NodeContextInterface
+}
+
+func (s *SesContext) NodeContext() NodeContextInterface {
+	return s.nodeContext
 }
 
 func (s *SesContext) SendRawData(msg interface{}, id int) {
@@ -83,13 +87,13 @@ func (s *SesContext) reset() {
 	s.gameProvider = nil
 	s.bCanRelease = true
 	s.id = 0
-	s.userContext.Reset()
+	s.nodeContext.Reset()
 }
 
 //Initialize 初始化数据
 func (s *SesContext) initialize() {
 	s.bCanRelease = true
-	s.userContext.Init()
+	s.nodeContext.Init()
 }
 
 func (s *SesContext) setSession(ses cellnet.Session, gameProvider *gameprovider) {

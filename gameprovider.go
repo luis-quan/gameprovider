@@ -24,7 +24,7 @@ type gameprovider struct {
 	//空闲节点
 	sesContextmgr sescontextmgr
 	//玩家数据
-	userContextType reflect.Type
+	nodeContextType reflect.Type
 	//peer离岸边
 	peerList list.List
 }
@@ -76,14 +76,14 @@ func (s *gameprovider) Start() {
 }
 
 //注册玩家数据
-func (s *gameprovider) RegisterSesContext(userContextType reflect.Type) {
-	if userContextType.Kind() == reflect.Ptr {
-		userContextType = userContextType.Elem()
+func (s *gameprovider) RegisterSesContext(nodeContextType reflect.Type) {
+	if nodeContextType.Kind() == reflect.Ptr {
+		nodeContextType = nodeContextType.Elem()
 	}
-	value := reflect.New(userContextType).Interface()
-	_, ok := value.(UserContextInterface)
+	value := reflect.New(nodeContextType).Interface()
+	_, ok := value.(NodeContextInterface)
 	if ok {
-		s.userContextType = userContextType
+		s.nodeContextType = nodeContextType
 	} else {
 		os.Exit(10)
 	}
@@ -92,11 +92,11 @@ func (s *gameprovider) RegisterSesContext(userContextType reflect.Type) {
 //创建玩家信息
 func (s *gameprovider) createSesContext() *SesContext {
 	context := s.sesContextmgr.getFree()
-	if context.userContext == nil {
-		co := reflect.New(s.userContextType).Interface()
-		if userContext, ok := co.(UserContextInterface); ok {
-			userContext.OnCreate()
-			context.userContext = userContext
+	if context.nodeContext == nil {
+		co := reflect.New(s.nodeContextType).Interface()
+		if nodeContext, ok := co.(NodeContextInterface); ok {
+			nodeContext.OnCreate()
+			context.nodeContext = nodeContext
 		} else {
 			os.Exit(111)
 		}

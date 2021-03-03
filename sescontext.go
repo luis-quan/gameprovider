@@ -55,17 +55,10 @@ func (s *SesContext) Peer() cellnet.Peer {
 	return nil
 }
 
-func (s *SesContext) Close(bRelease bool) {
-	if bRelease {
-		s.SetCanRelease(true)
-	}
+func (s *SesContext) Close() {
+	s.SetCanRelease(true)
 	if s.ses != nil {
 		s.ses.Close()
-		if bRelease {
-			s.gameProvider.releaseContext(s)
-		}
-	} else {
-		s.gameProvider.releaseContext(s)
 	}
 }
 

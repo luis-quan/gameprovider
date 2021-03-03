@@ -66,11 +66,14 @@ func (s *gameprovider) ConnectServer(name string, addr string, procName string) 
 }
 
 func (s *gameprovider) Start() {
+	log.Debugln("gameprovider Start")
+
 	s.serverLogic.OnInit()
 
 	s.timerLoop.Start()
 	// 事件队列开始循环
 	s.queue.StartLoop()
+
 	// 阻塞等待事件队列结束退出( 在另外的goroutine调用queue.StopLoop() )
 	s.queue.Wait()
 }
@@ -121,7 +124,7 @@ func (s *gameprovider) onCloseConnection(session cellnet.Session) {
 		sesContext, ok := context.(*SesContext)
 		if ok && sesContext != nil {
 			if sesContext.bCanRelease {
-				s.sesContextmgr.removeContext(sesContext)
+				s.releaseContext(sesContext)
 			} else {
 				sesContext.setSession(nil, s)
 			}
@@ -135,26 +138,6 @@ func (s *gameprovider) releaseContext(sescontext *SesContext) {
 		sescontext.ses.(cellnet.ContextSet).SetContext(SES_CONTEXT, nil)
 	}
 	s.sesContextmgr.removeContext(sescontext)
-}
-
-// SetContextCanRelease是不是能释放节点
-func (s *gameprovider) SetContextCanRelease(sescontext *SesContext, b bool) {
-	if sescontext.id != 0 {
-		if ses, bf := s.sesContextmgr.findContext(sescontext.id); bf == true {
-			//已经断开连接了
-			if sescontext.ses == nil {
-				//释放掉
-				s.sesContextmgr.removeContext(ses)
-			} else {
-				//连接还在
-				sescontext.SetCanRelease(b)
-			}
-		} else {
-			//查找出错了
-		}
-	} else {
-		//这个节点 本来就不在使用不需要控制
-	}
 }
 
 func (s *gameprovider) onEvent(ev cellnet.Event) {
@@ -176,7 +159,7 @@ func (s *gameprovider) onEvent(ev cellnet.Event) {
 			}
 			break
 		case *cellnet.SessionClosed:
-			log.Debugln("client error ")
+			log.Debugln("client closed ")
 			if sescontext, bf := s.sesContextmgr.findContext(event.Session().ID()); bf == true {
 				s.serverLogic.OnConnectClosed(sescontext)
 			}

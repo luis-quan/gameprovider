@@ -42,7 +42,7 @@ func (s *Serverlogic) OnNetMessage(sescontext *gameprovider.SesContext, id int, 
 func (s *Serverlogic) OnConnectSuccess(context *gameprovider.SesContext) {
 	fmt.Println("OnConnectSuccess")
 	context.SetCanRelease(false)
-	context.Close(false)
+	context.Close()
 }
 func (s *Serverlogic) OnConnectAccept(context *gameprovider.SesContext) {
 	fmt.Println("OnConnectAccept")

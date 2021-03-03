@@ -88,7 +88,8 @@ func (s *gameprovider) RegisterSesContext(nodeContextType reflect.Type) {
 	if ok {
 		s.nodeContextType = nodeContextType
 	} else {
-		os.Exit(10)
+		log.Errorln("RegisterSesContext error!")
+		os.Exit(0)
 	}
 }
 
@@ -101,7 +102,8 @@ func (s *gameprovider) createSesContext() *SesContext {
 			nodeContext.OnCreate()
 			context.nodeContext = nodeContext
 		} else {
-			os.Exit(111)
+			log.Errorln("createSesContext error!")
+			os.Exit(0)
 		}
 	}
 
@@ -167,7 +169,7 @@ func (s *gameprovider) onEvent(ev cellnet.Event) {
 			break
 		case *cellnet.SessionConnectError:
 			log.Debugln("client SessionConnectError ")
-			os.Exit(1)
+			os.Exit(0)
 			break
 		default:
 			if sescontext, bf := s.sesContextmgr.findContext(event.Session().ID()); bf == true {

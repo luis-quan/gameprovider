@@ -49,7 +49,8 @@ func (s *sescontextmgr) addContext(ses *SesContext) {
 	if id, err := ses.ID(); err == nil {
 		s.mapSesContext[id] = ses
 	} else {
-		os.Exit(100)
+		log.Debugln("addContext Error")
+		os.Exit(0)
 	}
 }
 
@@ -60,7 +61,8 @@ func (s *sescontextmgr) removeContext(ses *SesContext) {
 		s.addFree(ses)
 		ses.reset()
 	} else {
-		os.Exit(101)
+		log.Debugln("removeContext Error")
+		os.Exit(0)
 	}
 }
 
